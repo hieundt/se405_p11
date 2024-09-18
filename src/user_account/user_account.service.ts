@@ -14,7 +14,7 @@ export class UserAccountService {
   ) {}
 
   async signUp(signUpDto: SignUpDto): Promise<UserAccount> {
-    const { email, password } = signUpDto;
+    const { email, password, username } = signUpDto;
 
     const existEmail = await this.userAccountModel.findOne({ email }).exec();
     if (existEmail) {
@@ -25,7 +25,7 @@ export class UserAccountService {
     const userAcount = new this.userAccountModel({
       email,
       passwordHash,
-      username: 'test',
+      username,
     });
     return userAcount.save();
   }
