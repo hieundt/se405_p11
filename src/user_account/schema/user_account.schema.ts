@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument, SchemaTypes, Types } from 'mongoose';
-import { Recipe } from 'src/recipe/schema/recipe.schema';
+import { Exclude } from 'class-transformer';
+import { HydratedDocument, SchemaTypes, Types } from 'mongoose';
 
 export type UserAccountDocument = HydratedDocument<UserAccount>;
 
@@ -8,20 +8,24 @@ export type UserAccountDocument = HydratedDocument<UserAccount>;
 export class UserAccount {
   _id: Types.ObjectId; //TODO: Consider cast to String
 
-  @Prop({ type: SchemaTypes.String, required: true, unique: true })
+  @Prop({ type: SchemaTypes.String, unique: true, default: null })
   username: string;
 
   @Prop({ type: SchemaTypes.String, required: true, unique: true })
   email: string;
 
   @Prop({ type: SchemaTypes.String, required: true, unique: true })
+  @Exclude({ toPlainOnly: true }) // HIde password from response
   passwordHash: string;
 
   @Prop({ type: SchemaTypes.String, default: null })
-  profilePicture: string; // url
+  avatar: string; // url
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Recipe' }] })
-  recipeList: Recipe[]; // Ref tới công thức, user có nhiều công thức
+  @Prop({ type: SchemaTypes.String, default: null })
+  bio: string;
+
+  @Prop({ type: SchemaTypes.Date, default: Date.now })
+  createdAt: Date;
 }
 
 export const UserAccountSchema = SchemaFactory.createForClass(UserAccount);

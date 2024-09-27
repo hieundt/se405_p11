@@ -9,9 +9,10 @@ import {
 } from '@nestjs/common';
 import { UserAccountService } from './user_account.service';
 
-import { UpdateUserAccountDto } from './dto/update-user_account.dto';
+import { UpdateUserAccountDto } from './dto/update_user_account.dto';
 import { SignUpDto } from './dto/sign_up.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { SignInDto } from './dto/sign_in.dto';
 
 @ApiTags('UserAcount')
 @Controller('useraccount')
@@ -19,13 +20,13 @@ export class UserAccountController {
   constructor(private readonly userAccountService: UserAccountService) {}
 
   @Post('signup')
-  signUp(@Body() signUpDto: SignUpDto) {
-    return this.userAccountService.signUp(signUpDto);
+  signUp(@Body() dto: SignUpDto) {
+    return this.userAccountService.signUp(dto);
   }
 
   @Post('signin')
-  signIn(@Body() signUpDto: SignUpDto) {
-    return this.userAccountService.signIn(signUpDto);
+  signIn(@Body() dto: SignInDto) {
+    return this.userAccountService.signIn(dto);
   }
 
   @Get()
@@ -33,16 +34,13 @@ export class UserAccountController {
     return this.userAccountService.findAll();
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateUserAccountDto: UpdateUserAccountDto,
-  ) {
-    return this.userAccountService.update(+id, updateUserAccountDto);
+  @Patch(':_id')
+  update(@Param('_id') _id: string, @Body() dto: UpdateUserAccountDto) {
+    return this.userAccountService.updateAccount(_id, dto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userAccountService.remove(+id);
+  @Delete(':_id')
+  remove(@Param('_id') _id: string) {
+    return this.userAccountService.removeAccount(_id);
   }
 }

@@ -4,6 +4,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { appConfig, jwtConfig, mongoConfig, swaggerConfig } from './config';
 import { UserAccountModule } from './user_account/user_account.module';
 import { RecipeModule } from './recipe/recipe.module';
+import { IngredientModule } from './ingredient/ingredient.module';
+import { StepModule } from './step/step.module';
+import { RecipePostModule } from './recipe_post/recipe_post.module';
+import { RatingModule } from './rating/rating.module';
+import { ReactionModule } from './reaction/reaction.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -28,6 +34,12 @@ import { RecipeModule } from './recipe/recipe.module';
         };
       },
     }),
+    IngredientModule,
+    StepModule,
+    RecipePostModule,
+    RatingModule,
+    ReactionModule,
+    CommentModule,
   ],
 })
 export class AppModule {}
