@@ -26,13 +26,13 @@ export class RecipePost {
   @IsOptional()
   createdAt: Date;
 
-  @ApiProperty({ type: [String], description: 'List of Rating IDs' })
-  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Rating' }] })
-  rating: Types.ObjectId[];
+  // @ApiProperty({ type: [String], description: 'List of Rating IDs' })
+  // @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Rating' }] })
+  // rating: Types.ObjectId[];
 
-  @ApiProperty({ type: [String], description: 'List of Comment IDs' })
-  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Comment' }] })
-  comment: Types.ObjectId[];
+  // @ApiProperty({ type: [String], description: 'List of Comment IDs' })
+  // @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Comment' }] })
+  // comment: Types.ObjectId[];
 }
 
 export const RecipePostSchema = SchemaFactory.createForClass(RecipePost);
