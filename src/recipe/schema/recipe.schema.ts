@@ -62,13 +62,13 @@ export class Recipe {
   @IsOptional()
   createdAt: Date;
 
-  @ApiProperty({ type: [String], description: 'List of ingredient IDs' })
-  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Ingredient' }] }) // Array of references
-  ingredient: Types.ObjectId[];
+  // @ApiProperty({ type: [String], description: 'List of ingredient IDs' })
+  // @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Ingredient' }] }) // Array of references
+  // ingredient: Types.ObjectId[];
 
-  @ApiProperty({ type: [String], description: 'List of step IDs' })
-  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Step' }] })
-  step: Types.ObjectId[];
+  // @ApiProperty({ type: [String], description: 'List of step IDs' })
+  // @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Step' }] })
+  // step: Types.ObjectId[];
 }
 
 export const RecipeSchema = SchemaFactory.createForClass(Recipe);
