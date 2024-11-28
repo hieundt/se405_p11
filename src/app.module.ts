@@ -13,8 +13,7 @@ import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
-    RecipeModule,
-    UserAccountModule,
+    // UserAccountModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [appConfig, jwtConfig, swaggerConfig, mongoConfig],
@@ -29,17 +28,19 @@ import { CommentModule } from './comment/comment.module';
         const username = configService.get('mongo.username');
         const password = configService.get('mongo.password');
         return {
-          uri: `mongodb+srv://${username}:${password}@${host}`,
+          uri: `mongodb+srv://${username}:${password}@${host}/?retryWrites=true&w=majority&appName=Cluster0`,
           dbName: dbname,
         };
       },
     }),
-    IngredientModule,
-    StepModule,
-    RecipePostModule,
-    RatingModule,
-    ReactionModule,
+    // IngredientModule,
+    // StepModule,
+    // RecipePostModule,
+    // RatingModule,
+    // ReactionModule,
+    // RecipeModule,
     CommentModule,
   ],
+  providers: [],
 })
 export class AppModule {}

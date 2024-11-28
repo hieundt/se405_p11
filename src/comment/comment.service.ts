@@ -12,7 +12,8 @@ export class CommentService {
 
   create(dto: Comment) {
     const comment = new this.commentModel(dto);
-    return comment.save();
+    comment.save();
+    return { status: 'success', message: comment };
   }
 
   findAll() {
