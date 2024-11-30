@@ -13,7 +13,7 @@ import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
-    // UserAccountModule,
+    UserAccountModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [appConfig, jwtConfig, swaggerConfig, mongoConfig],
@@ -33,12 +33,12 @@ import { CommentModule } from './comment/comment.module';
         };
       },
     }),
-    // IngredientModule,
-    // StepModule,
-    // RecipePostModule,
-    // RatingModule,
-    // ReactionModule,
-    // RecipeModule,
+    IngredientModule,
+    StepModule,
+    RecipePostModule,
+    RatingModule,
+    ReactionModule,
+    RecipeModule,
     CommentModule,
   ],
   providers: [],

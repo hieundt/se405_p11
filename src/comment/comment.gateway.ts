@@ -1,5 +1,4 @@
 import {
-  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
   SubscribeMessage,
@@ -9,7 +8,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { appConfig } from 'src/config';
 import { CommentService } from './comment.service';
-import { Comment } from './schema/comment.schema';
+// import { Comment } from './schema/comment.schema';
 
 @WebSocketGateway(appConfig().webSocketPort, { cors: { origin: '*' } })
 export class CommentGateWay
@@ -24,7 +23,6 @@ export class CommentGateWay
       'user-connected',
       `User with ID: ${client.id} connected`,
     );
-    // this.server.emit('user-connected', `User with ID: ${client.id} connected`);
   }
 
   handleDisconnect(client: Socket) {
@@ -32,16 +30,12 @@ export class CommentGateWay
       'user-disconnected',
       `User with ID: ${client.id} disconnected`,
     );
-    // this.server.emit('user-disconnected', `User with ID: ${client.id} disconnected`,);
   }
 
-  @SubscribeMessage('createComment') // socket.on
+  @SubscribeMessage('createComment')
   async handleCreateComment(client: Socket, payload: any) {
-    const comment = payload; //await this.commentService.create(payload);
-    // console.log(comment);
+    const comment = payload;
 
-    // client.emit('commentReply', 'This is a comment reply to the client'); //socket.emit()
-    client.broadcast.emit('comment', comment); //io.emit()
-    // this.server.emit('comment', comment); //io.emit()
+    client.emit('comment', comment);
   }
 }
