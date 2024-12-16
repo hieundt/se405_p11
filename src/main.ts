@@ -8,7 +8,6 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
   setupSwagger(app);
   app.useGlobalPipes(new ValidationPipe());
-  // app.setGlobalPrefix('api');
 
   const configService = app.get(ConfigService);
   const nodeEnv = configService.get('app.nodeEnv');
@@ -17,12 +16,9 @@ async function bootstrap() {
 
   await app.listen(port);
 
-  const logger = new Logger('Bootstrap');
-  logger.log(
-    `Application ${nodeEnv} mode is running on: http://localhost:${port}`,
-  );
-  logger.log(
-    `WebSocket server is running on: http://localhost:${webSocketPort}`,
-  );
+  const logger = new Logger('APPLICATION STARTED HERE');
+  logger.log(`SWAGGER DOC: http://localhost:${port}/docs`);
+  logger.log(`API ROUTER ${nodeEnv} MODE: http://localhost:${port}`);
+  logger.log(`WEBSOCKET: ws://localhost:${webSocketPort}`);
 }
 bootstrap();

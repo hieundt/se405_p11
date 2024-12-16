@@ -1,19 +1,19 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { appConfig, jwtConfig, mongoConfig, swaggerConfig } from './config';
-import { UserAccountModule } from './user_account/user_account.module';
-import { RecipeModule } from './recipe/recipe.module';
-import { IngredientModule } from './ingredient/ingredient.module';
-import { StepModule } from './step/step.module';
-import { RecipePostModule } from './recipe_post/recipe_post.module';
-import { RatingModule } from './rating/rating.module';
-import { ReactionModule } from './reaction/reaction.module';
-import { CommentModule } from './comment/comment.module';
+import { RecipeModule } from './api/recipe/recipe.module';
+import { IngredientModule } from './api/ingredient/ingredient.module';
+import { StepModule } from './api/step/step.module';
+import { RecipePostModule } from './api/recipe_post/recipe_post.module';
+import { RatingModule } from './api/rating/rating.module';
+import { ReactionModule } from './api/reaction/reaction.module';
+import { CommentModule } from './api/comment/comment.module';
+import { UserModule } from './api/user/user.module';
 
 @Module({
   imports: [
-    UserAccountModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [appConfig, jwtConfig, swaggerConfig, mongoConfig],
@@ -33,14 +33,14 @@ import { CommentModule } from './comment/comment.module';
         };
       },
     }),
-    IngredientModule,
-    StepModule,
-    RecipePostModule,
+    UserModule,
     RatingModule,
-    ReactionModule,
-    RecipeModule,
-    CommentModule,
+    // IngredientModule,
+    // StepModule,
+    // RecipePostModule,
+    // ReactionModule,
+    // RecipeModule,
+    // CommentModule,
   ],
-  providers: [],
 })
 export class AppModule {}
