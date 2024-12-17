@@ -1,16 +1,7 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, InternalServerErrorException } from '@nestjs/common';
 import { IngredientService } from './ingredient.service';
-import { UpdateIngredientDto } from './dto/update_ingredient.dto';
+import { IngredientDto } from './dto/ingredient.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { Ingredient } from './schema/ingredient.schema';
 
 @ApiTags('Ingredient')
 @Controller('ingredient')
@@ -18,27 +9,47 @@ export class IngredientController {
   constructor(private readonly ingredientService: IngredientService) {}
 
   @Post()
-  create(@Body() dto: Ingredient) {
-    return this.ingredientService.create(dto);
+  async create(@Body() dto: IngredientDto) {
+    try {
+      return await this.ingredientService.create(dto);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   @Get()
-  findAll() {
-    return this.ingredientService.findAll();
+  async findAll() {
+    try {
+      return await this.ingredientService.findAll();
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   @Get(':id')
   async findById(@Param('id') id: string) {
-    return await this.ingredientService.findById(id);
+    try {
+      return await this.ingredientService.findById(id);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateIngredientDto) {
-    return this.ingredientService.update(id, dto);
+  async update(@Param('id') id: string, @Body() dto: IngredientDto) {
+    try {
+      return await this.ingredientService.update(id, dto);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.ingredientService.remove(id);
+  async remove(@Param('id') id: string) {
+    try {
+      return await this.ingredientService.delete(id);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 }

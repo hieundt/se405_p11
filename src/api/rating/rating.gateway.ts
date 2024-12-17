@@ -9,7 +9,6 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { appConfig } from 'src/config';
-import { RatingDto } from './dto/rating.dto';
 import { RatingService } from './rating.service';
 
 @WebSocketGateway(appConfig().webSocketPort, { cors: { origin: '*' } })
@@ -27,13 +26,43 @@ export class RatingGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('create-rating')
-  async handleCreateRating(@ConnectedSocket() client: Socket, @MessageBody() payload: RatingDto) {
-    const rating = await this.ratingService.create({
-      userId: payload.userId,
-      recipePostId: payload.recipePostId,
-      rate: payload.rate,
-    });
+  async handleCreateRating(@ConnectedSocket() client: Socket, @MessageBody() payload: any) {
+    try {
+      const rating = await this.ratingService.create({
+        userId: payload.userId,
+        recipeId: payload.recipeId,
+        rating: payload.rating,
+      });
+      client.broadcast.emit('rating', rating);
+      client.emit('create-rating-success', rating);
+    } catch (error) {
+      client.emit('create-rating-error', { message: error.message });
+    }
+  }
 
-    client.broadcast.emit('rating', rating);
+  @SubscribeMessage('update-rating')
+  async handleUpdateRating(@ConnectedSocket() client: Socket, @MessageBody() payload: any) {
+    try {
+      const rating = await this.ratingService.update(payload.id, {
+        userId: payload.userId,
+        recipeId: payload.recipeId,
+        rating: payload.rating,
+      });
+      client.broadcast.emit('rating', rating);
+      client.emit('update-rating-success', rating);
+    } catch (error) {
+      client.emit('update-rating-error', { message: error.message });
+    }
+  }
+
+  @SubscribeMessage('delete-rating')
+  async handleDeleteRating(@ConnectedSocket() client: Socket, @MessageBody() payload: any) {
+    try {
+      const rating = await this.ratingService.delete(payload.id);
+      client.broadcast.emit('rating', rating);
+      client.emit('delete-rating-success', { id: payload.id });
+    } catch (error) {
+      client.emit('delete-rating-error', { message: error.message });
+    }
   }
 }

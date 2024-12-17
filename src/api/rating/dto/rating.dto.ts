@@ -11,10 +11,10 @@ export class RatingDto {
   @ApiProperty()
   @IsMongoId()
   @IsNotEmpty()
-  recipePostId: string;
+  recipeId: string;
 
   @ApiProperty({ enum: [1, 2, 3, 4, 5] })
   @IsEnum([1, 2, 3, 4, 5])
   @IsNotEmpty()
-  rate: RATING;
+  rating: RATING;
 }

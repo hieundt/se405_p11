@@ -1,66 +1,39 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
-import { HydratedDocument, SchemaTypes, Types } from 'mongoose';
+import mongoose from 'mongoose';
+import { Ingredient } from 'src/api/ingredient/schema/ingredient.schema';
+import { Step } from 'src/api/step/schema/step.schema';
+import { DIFFICULT } from 'src/interfaces';
 
-export type RecipeDocument = HydratedDocument<Recipe>;
+export type RecipeDocument = Recipe & Document;
 
-@Schema({ collection: 'recipe' })
+@Schema({ collection: 'recipe', timestamps: true })
 export class Recipe {
-  _id: Types.ObjectId;
+  @Prop()
+  userId: string;
 
-  @ApiProperty({ type: String })
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'UserAccount' })
-  userId: Types.ObjectId;
-
-  @ApiProperty({ type: String })
-  @Prop({ type: SchemaTypes.String, unique: true })
-  @IsString()
+  @Prop({ required: true })
   title: string;
 
-  @ApiProperty({ type: String, required: false })
-  @Prop({ type: SchemaTypes.String, default: null })
-  @IsString()
-  @IsOptional()
+  @Prop()
   description: string;
 
-  @ApiProperty({ type: Number, required: false })
-  @Prop({ type: SchemaTypes.Number, default: null })
-  @IsNumber()
-  @IsOptional()
+  @Prop()
+  img: string;
+
+  @Prop({ required: true })
   timeCook: number;
 
-  @ApiProperty({ enum: [1 | 2 | 3 | 4 | 5], required: false })
-  @Prop({
-    type: SchemaTypes.Number,
-    default: 3,
-    enum: [1 | 2 | 3 | 4 | 5],
-  })
-  @IsEnum([1 | 2 | 3 | 4 | 5])
-  difficult: string;
+  @Prop({ required: true, enum: [1, 2, 3, 4, 5] })
+  difficult: DIFFICULT;
 
-  @ApiProperty({ type: Number })
-  @Prop({ type: SchemaTypes.Number, required: true })
-  @IsNumber()
-  calo: number;
+  @Prop({ required: true })
+  caloTotal: number;
 
-  @ApiProperty({ type: String })
-  @Prop({ type: SchemaTypes.String, required: true })
-  @IsString()
-  status: string;
+  @Prop({ required: true, type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Ingredient' }] })
+  ingredientList: Ingredient[];
 
-  @ApiProperty({ type: Date, required: false })
-  @Prop({ type: SchemaTypes.Date, default: Date.now })
-  @IsOptional()
-  createdAt: Date;
-
-  // @ApiProperty({ type: [String], description: 'List of ingredient IDs' })
-  // @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Ingredient' }] }) // Array of references
-  // ingredient: Types.ObjectId[];
-
-  // @ApiProperty({ type: [String], description: 'List of step IDs' })
-  // @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Step' }] })
-  // step: Types.ObjectId[];
+  @Prop({ required: true, type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Step' }] })
+  stepList: Step[];
 }
 
 export const RecipeSchema = SchemaFactory.createForClass(Recipe);

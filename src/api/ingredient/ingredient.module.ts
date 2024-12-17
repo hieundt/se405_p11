@@ -5,11 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Ingredient, IngredientSchema } from './schema/ingredient.schema';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      { name: Ingredient.name, schema: IngredientSchema },
-    ]),
-  ],
+  imports: [MongooseModule.forFeature([{ name: Ingredient.name, schema: IngredientSchema }])],
   controllers: [IngredientController],
   providers: [IngredientService],
 })

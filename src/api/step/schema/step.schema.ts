@@ -1,26 +1,19 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString } from 'class-validator';
-import { HydratedDocument, SchemaTypes, Types } from 'mongoose';
 
-export type StepDocument = HydratedDocument<Step>;
+export type StepDocument = Step & Document;
 
-@Schema({ collection: 'step' })
+@Schema({ collection: 'step', timestamps: true })
 export class Step {
-  _id: Types.ObjectId;
+  @Prop()
+  source: string;
 
-  @ApiProperty({ type: String, description: 'Ref to Recipe ID' })
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'Recipe' })
-  recipeId: Types.ObjectId;
-
-  @ApiProperty({ type: Number })
-  @Prop({ type: SchemaTypes.Number, required: true })
-  @IsNumber()
+  @Prop({ required: true })
   stepNumber: number;
 
-  @ApiProperty({ type: String })
-  @Prop({ type: SchemaTypes.String, required: true })
-  @IsString()
+  @Prop({ required: true })
+  title: string;
+
+  @Prop({ required: true })
   instruction: string;
 }
 

@@ -1,48 +1,47 @@
 import { Model } from 'mongoose';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Recipe } from './schema/recipe.schema';
-import { UpdateRecipeDto } from './dto/update_recipe.dto';
+import { RecipeDto } from './dto/recipe.dto';
+import { SchemaNotFoundException } from 'src/common/error';
 
 @Injectable()
 export class RecipeService {
   constructor(@InjectModel(Recipe.name) private recipeModel: Model<Recipe>) {}
 
-  create(dto: Recipe) {
+  async create(dto: RecipeDto) {
     const recipe = new this.recipeModel(dto);
-    return recipe.save();
+    return await recipe.save();
   }
 
-  findAll() {
-    return this.recipeModel.find();
+  async findAll() {
+    return await this.recipeModel.find().exec();
   }
 
-  findById(id: string) {
-    const existRecipe = this.recipeModel
-      .findById(id)
-      .populate('ingredient')
-      .populate('step')
+  async findById(id: string) {
+    const existRecipe = await this.recipeModel.findById(id).populate('ingredient').populate('step').exec();
+    if (!existRecipe) {
+      throw new SchemaNotFoundException(Recipe.name, id);
+    }
+    return existRecipe;
+  }
+
+  async update(id: string, dto: RecipeDto) {
+    const existRecipe = await this.recipeModel
+      .findByIdAndUpdate(id, dto, {
+        new: true,
+      })
       .exec();
     if (!existRecipe) {
-      throw new NotFoundException(`Recipe #${id} not found`);
+      throw new SchemaNotFoundException(Recipe.name, id);
     }
     return existRecipe;
   }
 
-  update(id: string, dto: UpdateRecipeDto) {
-    const existRecipe = this.recipeModel.findByIdAndUpdate(id, dto, {
-      new: true,
-    });
+  async delete(id: string) {
+    const existRecipe = await this.recipeModel.findByIdAndDelete(id).exec();
     if (!existRecipe) {
-      throw new NotFoundException(`Recipe #${id} not found`);
-    }
-    return existRecipe;
-  }
-
-  remove(id: string) {
-    const existRecipe = this.recipeModel.findByIdAndDelete(id);
-    if (!existRecipe) {
-      throw new NotFoundException(`Recipe #${id} not found`);
+      throw new SchemaNotFoundException(Recipe.name, id);
     }
     return existRecipe;
   }

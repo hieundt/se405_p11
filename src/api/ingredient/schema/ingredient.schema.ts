@@ -1,38 +1,23 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
-import { HydratedDocument, SchemaTypes, Types } from 'mongoose';
 
-export type IngredientDocument = HydratedDocument<Ingredient>;
+export type IngredientDocument = Ingredient & Document;
 
-@Schema({ collection: 'ingredient' })
+@Schema({ collection: 'ingredient', timestamps: true })
 export class Ingredient {
-  _id: Types.ObjectId;
-
-  // @Prop({ type: SchemaTypes.ObjectId, ref: 'Recipe' })
-  // recipeId: Types.ObjectId;
-
-  @ApiProperty({ type: String })
-  @Prop({ type: SchemaTypes.String, required: true, unique: true })
-  @IsString()
-  name: string;
-
-  @ApiProperty({ type: String, required: false })
-  @Prop({ type: SchemaTypes.String, default: null })
-  @IsString()
-  @IsOptional()
-  description: string;
-
-  @ApiProperty({ type: String, required: false })
-  @Prop({ type: SchemaTypes.String, default: null })
-  @IsString()
-  @IsOptional()
+  @Prop({ required: true })
   img: string;
 
-  @ApiProperty({ type: Number })
-  @Prop({ type: SchemaTypes.Number, required: true })
-  @IsNumber()
-  calo: number;
+  @Prop({ required: true })
+  name: string;
+
+  @Prop({ required: true })
+  calo: string;
+
+  @Prop({ required: true })
+  unit: string;
+
+  @Prop({ required: true })
+  description: string;
 }
 
 export const IngredientSchema = SchemaFactory.createForClass(Ingredient);

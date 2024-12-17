@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as argon2 from 'argon2';
-import { CreateUserDto, SignInDto, UpdateUserDto } from './dto/user.dto';
+import { CreateUserDto, ForgotPasswordDto, SignInDto, UpdateUserDto } from './dto/user.dto';
 import {
+  ConfirmPasswordDoesNotMatchException,
   EmailAlreadyExistsException,
   EmailDoesNotExistsException,
   PasswordDoesNotMatchException,
@@ -32,8 +33,8 @@ export class UserService {
   }
 
   async signUp(dto: CreateUserDto): Promise<User> {
-    const existEmail = await this.userModel.findOne({ email: dto.email }).exec();
-    if (existEmail) {
+    const existUser = await this.userModel.findOne({ email: dto.email }).exec();
+    if (existUser) {
       throw new EmailAlreadyExistsException(dto.email);
     }
     const passwordHash = await argon2.hash(dto.password);
@@ -42,9 +43,26 @@ export class UserService {
     return newUser.save();
   }
 
-  // async forgotPassword(dto: ForgotPasswordDto): Promise<void> {
-
-  // }
+  async forgotPassword(dto: ForgotPasswordDto): Promise<boolean> {
+    const existUser = await this.userModel.findOne({ email: dto.email }).exec();
+    if (existUser) {
+      if (dto.newPassword !== dto.confirmNewPassword) {
+        throw new ConfirmPasswordDoesNotMatchException();
+      } else {
+        await this.userModel
+          .findByIdAndUpdate(
+            existUser._id,
+            {
+              password: await argon2.hash(dto.newPassword),
+            },
+            { new: true },
+          )
+          .exec();
+        return true;
+      }
+    }
+    throw new EmailAlreadyExistsException(dto.email);
+  }
 
   async findAll(): Promise<User[]> {
     return await this.userModel.find().exec();
@@ -64,7 +82,7 @@ export class UserService {
       bio: dto.bio ?? existUser.bio,
     };
 
-    return this.userModel.findByIdAndUpdate(id, updateUser, { new: true }).exec();
+    return await this.userModel.findByIdAndUpdate(id, updateUser, { new: true }).exec();
   }
 
   async deleteUser(id: string): Promise<boolean> {

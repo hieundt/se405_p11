@@ -1,16 +1,7 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, InternalServerErrorException } from '@nestjs/common';
 import { StepService } from './step.service';
-import { UpdateStepDto } from './dto/update-step.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { Step } from './schema/step.schema';
+import { StepDto } from './dto/step.dto';
 
 @ApiTags('Step')
 @Controller('step')
@@ -18,27 +9,47 @@ export class StepController {
   constructor(private readonly stepService: StepService) {}
 
   @Post()
-  create(@Body() dto: Step) {
-    return this.stepService.create(dto);
+  async create(@Body() dto: StepDto) {
+    try {
+      return await this.stepService.create(dto);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   @Get()
-  findAll() {
-    return this.stepService.findAll();
+  async findAll() {
+    try {
+      return await this.stepService.findAll();
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   @Get(':id')
   async findById(@Param('id') id: string) {
-    return await this.stepService.findById(id);
+    try {
+      return await this.stepService.findById(id);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateStepDto) {
-    return this.stepService.update(id, dto);
+  async update(@Param('id') id: string, @Body() dto: StepDto) {
+    try {
+      return await this.stepService.update(id, dto);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.stepService.remove(id);
+  async remove(@Param('id') id: string) {
+    try {
+      return await this.stepService.delete(id);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 }

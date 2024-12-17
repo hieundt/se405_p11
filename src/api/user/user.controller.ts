@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, InternalServerErrorException } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
-import { CreateUserDto, SignInDto, UpdateUserDto } from './dto/user.dto';
+import { CreateUserDto, ForgotPasswordDto, SignInDto, UpdateUserDto } from './dto/user.dto';
 
 @ApiTags('User')
 @Controller('user')
@@ -26,18 +26,39 @@ export class UserController {
     }
   }
 
+  @Patch('forgot-password')
+  async forgotPassword(@Body() dto: ForgotPasswordDto) {
+    try {
+      return await this.userService.forgotPassword(dto);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
   @Get()
-  findAll() {
-    return this.userService.findAll();
+  async findAll() {
+    try {
+      return await this.userService.findAll();
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
-    return this.userService.updateUser(id, dto);
+    try {
+      return this.userService.updateUser(id, dto);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.userService.deleteUser(id);
+    try {
+      return this.userService.deleteUser(id);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 }

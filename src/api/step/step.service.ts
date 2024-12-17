@@ -1,44 +1,47 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { UpdateStepDto } from './dto/update-step.dto';
+import { Injectable } from '@nestjs/common';
 import { Step } from './schema/step.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { StepDto } from './dto/step.dto';
+import { SchemaNotFoundException } from 'src/common/error';
 
 @Injectable()
 export class StepService {
   constructor(@InjectModel(Step.name) private ingredientModel: Model<Step>) {}
 
-  create(dto: Step) {
+  async create(dto: StepDto) {
     const ingredient = new this.ingredientModel(dto);
-    return ingredient.save();
+    return await ingredient.save();
   }
 
-  findAll() {
-    return this.ingredientModel.find();
+  async findAll() {
+    return await this.ingredientModel.find().exec();
   }
 
-  findById(id: string) {
-    const existStep = this.ingredientModel.findById(id).exec();
+  async findById(id: string) {
+    const existStep = await this.ingredientModel.findById(id).exec();
     if (!existStep) {
-      throw new NotFoundException(`Step #${id} not found`);
+      throw new SchemaNotFoundException(Step.name, id);
     }
     return existStep;
   }
 
-  update(id: string, dto: UpdateStepDto) {
-    const existStep = this.ingredientModel.findByIdAndUpdate(id, dto, {
-      new: true,
-    });
+  async update(id: string, dto: StepDto) {
+    const existStep = await this.ingredientModel
+      .findByIdAndUpdate(id, dto, {
+        new: true,
+      })
+      .exec();
     if (!existStep) {
-      throw new NotFoundException(`Step #${id} not found`);
+      throw new SchemaNotFoundException(Step.name, id);
     }
     return existStep;
   }
 
-  remove(id: string) {
-    const existStep = this.ingredientModel.findByIdAndDelete(id);
+  async delete(id: string) {
+    const existStep = await this.ingredientModel.findByIdAndDelete(id).exec();
     if (!existStep) {
-      throw new NotFoundException(`Step #${id} not found`);
+      throw new SchemaNotFoundException(Step.name, id);
     }
     return existStep;
   }

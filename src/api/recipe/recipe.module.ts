@@ -5,9 +5,7 @@ import { RecipeService } from './recipe.service';
 import { Recipe, RecipeSchema } from './schema/recipe.schema';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([{ name: Recipe.name, schema: RecipeSchema }]),
-  ],
+  imports: [MongooseModule.forFeature([{ name: Recipe.name, schema: RecipeSchema }])],
   controllers: [RecipeController],
   providers: [RecipeService],
 })
