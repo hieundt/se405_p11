@@ -41,6 +41,7 @@ import { UserModule } from './api/user/user.module';
     // ReactionModule,
     RecipeModule,
     // CommentModule,
+    // TODO: UNCOMMENT MODULES
   ],
 })
 export class AppModule {}
