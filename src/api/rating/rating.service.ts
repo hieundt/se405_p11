@@ -12,7 +12,7 @@ export class RatingService {
 
   async create(dto: RatingDto): Promise<Rating> {
     const newRating = new this.ratingModel(dto);
-    return newRating.save();
+    return await newRating.save();
   }
 
   async findAll(): Promise<Rating[]> {

@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { RecipePost } from './schema/recipe_post.schema';
 import { UpdateRecipePostDto } from './dto/update_recipe_post.dto';
 import { RecipePostService } from './recipe_post.service';
@@ -38,7 +30,7 @@ export class RecipePostController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.postService.remove(id);
+  delete(@Param('id') id: string) {
+    return this.postService.delete(id);
   }
 }

@@ -1,44 +1,54 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, InternalServerErrorException } from '@nestjs/common';
 import { ReactionService } from './reaction.service';
-import { UpdateReactionDto } from './dto/update-reaction.dto';
-import { Reaction } from './schema/reaction.schema';
 import { ApiTags } from '@nestjs/swagger';
+import { ReactionDto } from './dto/reaction.dto';
 
 @ApiTags('Reaction')
 @Controller('reaction')
 export class ReactionController {
   constructor(private readonly reactionService: ReactionService) {}
-
   @Post()
-  create(@Body() dto: Reaction) {
-    return this.reactionService.create(dto);
+  async create(@Body() dto: ReactionDto) {
+    try {
+      return await this.reactionService.create(dto);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  @Get(':recipePostId')
+  async findRecipePostReaction(@Param('recipePostId') recipePostId: string) {
+    try {
+      return await this.reactionService.findRecipePostReaction(recipePostId);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   @Get()
-  findAll() {
-    return this.reactionService.findAll();
+  async findAll() {
+    try {
+      return await this.reactionService.findAll();
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   @Get(':id')
   async findById(@Param('id') id: string) {
-    return await this.reactionService.findById(id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateReactionDto) {
-    return this.reactionService.update(id, dto);
+    try {
+      return await this.reactionService.findById(id);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reactionService.remove(id);
+  async delete(@Param('id') id: string) {
+    try {
+      return await this.reactionService.delete(id);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 }

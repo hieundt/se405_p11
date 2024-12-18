@@ -45,7 +45,7 @@ export class RecipeController {
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string) {
+  async delete(@Param('id') id: string) {
     try {
       return await this.recipeService.delete(id);
     } catch (error) {

@@ -7,11 +7,9 @@ import { Comment } from './schema/comment.schema';
 import { CommentGateWay } from './comment.gateway';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
-  ],
+  imports: [MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }])],
   controllers: [CommentController],
-  exports: [CommentService],
   providers: [CommentService, CommentGateWay],
+  exports: [CommentGateWay],
 })
 export class CommentModule {}

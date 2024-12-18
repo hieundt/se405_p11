@@ -1,30 +1,17 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional } from 'class-validator';
-import { HydratedDocument, SchemaTypes, Types } from 'mongoose';
 
-export type ReactionDocument = HydratedDocument<Reaction>;
+export type ReactionDocument = Reaction & Document;
 
-@Schema({ collection: 'reaction' })
+@Schema({ collection: 'reaction', timestamps: true })
 export class Reaction {
-  _id: Types.ObjectId;
+  @Prop({ required: true, ref: 'User' })
+  userId: string;
 
-  @ApiProperty({ type: String, description: 'Ref to account ID' })
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'UserAccount' })
-  userId: Types.ObjectId;
+  @Prop({ required: true })
+  recipePostId: string;
 
-  @ApiProperty({ type: String, description: 'Ref to post ID' })
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'RecipePost' })
-  recipePostId: Types.ObjectId;
-
-  @ApiProperty({ type: Boolean, required: false })
-  @Prop({ type: SchemaTypes.Boolean, default: false })
-  status: boolean;
-
-  @ApiProperty({ type: Date, required: false })
-  @Prop({ type: SchemaTypes.Date, default: Date.now })
-  @IsOptional()
-  createdAt: Date;
+  @Prop({ required: true })
+  react: boolean;
 }
 
 export const ReactionSchema = SchemaFactory.createForClass(Reaction);

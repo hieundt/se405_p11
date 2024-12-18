@@ -45,7 +45,7 @@ export class RatingController {
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string) {
+  async delete(@Param('id') id: string) {
     try {
       return await this.ratingService.delete(id);
     } catch (error) {

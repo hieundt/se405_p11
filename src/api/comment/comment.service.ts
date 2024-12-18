@@ -1,58 +1,62 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { UpdateCommentDto } from './dto/update_comment.dto';
+import { Model } from 'mongoose';
 import { Comment } from './schema/comment.schema';
-import { CreateCommentDto } from './dto/create_comment.dto';
+import { CommentDto } from './dto/comment.dto';
+import { SchemaNotFoundException } from 'src/common/error';
 
 @Injectable()
 export class CommentService {
-  constructor(
-    @InjectModel(Comment.name) private commentModel: Model<Comment>,
-  ) {}
+  constructor(@InjectModel(Comment.name) private commentModel: Model<Comment>) {}
 
-  async create(dto: Comment) {
-    const { userId, recipePostId, parentId, content } = dto;
-
-    const commentData = {
-      userId: new Types.ObjectId(userId),
-      recipePostId: new Types.ObjectId(recipePostId),
-      parentId: parentId ? new Types.ObjectId(parentId) : null,
-      content,
-    };
-
-    const comment = new this.commentModel(commentData);
-    await comment.save();
-    return comment;
+  async create(dto: CommentDto): Promise<Comment> {
+    const comment = new this.commentModel(dto);
+    return await comment.save();
   }
 
-  findAll() {
-    return this.commentModel.find();
+  async findAll(): Promise<Comment[]> {
+    return await this.commentModel.find().exec();
   }
 
-  findById(id: string) {
-    const existComment = this.commentModel.findById(id).exec();
+  async findRecipePostComment(recipePostId: string): Promise<Comment[]> {
+    return await this.commentModel.find({ recipePostId }).exec();
+  }
+
+  async findReplyComment(parentId: string): Promise<Comment[]> {
+    return await this.commentModel.find({ parentId }).exec();
+  }
+
+  async findById(id: string): Promise<Comment> {
+    const existComment = await this.commentModel.findById(id).exec();
     if (!existComment) {
-      throw new NotFoundException(`Comment #${id} not found`);
+      throw new SchemaNotFoundException(Comment.name, id);
     }
     return existComment;
   }
 
-  update(id: string, dto: UpdateCommentDto) {
-    const existComment = this.commentModel.findByIdAndUpdate(id, dto, {
-      new: true,
-    });
+  async update(id: string, dto: CommentDto): Promise<Comment> {
+    const existComment = await this.commentModel
+      .findByIdAndUpdate(id, dto, {
+        new: true,
+      })
+      .exec();
     if (!existComment) {
-      throw new NotFoundException(`Comment #${id} not found`);
+      throw new SchemaNotFoundException(Comment.name, id);
     }
     return existComment;
   }
 
-  remove(id: string) {
-    const existComment = this.commentModel.findByIdAndDelete(id);
+  async delete(id: string): Promise<boolean> {
+    const existComment = await this.commentModel.findById(id).exec();
     if (!existComment) {
-      throw new NotFoundException(`Comment #${id} not found`);
+      throw new SchemaNotFoundException(Comment.name, id);
     }
-    return existComment;
+
+    if (existComment.isParent) {
+      await this.commentModel.deleteMany({ parentId: id }).exec();
+    }
+    await this.commentModel.findByIdAndDelete(id).exec();
+
+    return true;
   }
 }

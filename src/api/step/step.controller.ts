@@ -45,7 +45,7 @@ export class StepController {
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string) {
+  async delete(@Param('id') id: string) {
     try {
       return await this.stepService.delete(id);
     } catch (error) {

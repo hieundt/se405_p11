@@ -15,11 +15,6 @@ export class StepDto {
   @IsNotEmpty()
   stepNumber: number;
 
-  @ApiProperty({ example: 'Preheat Oven', description: 'Title of the step' })
-  @IsString()
-  @IsNotEmpty()
-  title: string;
-
   @ApiProperty({
     example: 'Preheat the oven to 180 degrees Celsius and prepare a baking tray.',
     description: 'Detailed instruction for the step',

@@ -11,9 +11,6 @@ export class Step {
   stepNumber: number;
 
   @Prop({ required: true })
-  title: string;
-
-  @Prop({ required: true })
   instruction: string;
 }
 

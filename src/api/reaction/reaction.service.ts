@@ -1,47 +1,40 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { UpdateReactionDto } from './dto/update-reaction.dto';
+import { Injectable } from '@nestjs/common';
 import { Reaction } from './schema/reaction.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { ReactionDto } from './dto/reaction.dto';
+import { SchemaNotFoundException } from 'src/common/error';
 
 @Injectable()
 export class ReactionService {
-  constructor(
-    @InjectModel(Reaction.name) private reactionModel: Model<Reaction>,
-  ) {}
+  constructor(@InjectModel(Reaction.name) private reactionModel: Model<Reaction>) {}
 
-  create(dto: Reaction) {
+  async create(dto: ReactionDto): Promise<Reaction> {
     const reaction = new this.reactionModel(dto);
-    return reaction.save();
+    return await reaction.save();
   }
 
-  findAll() {
-    return this.reactionModel.find();
+  async findRecipePostReaction(recipePostId: string): Promise<Reaction[]> {
+    return await this.reactionModel.find({ recipePostId }).exec();
   }
 
-  findById(id: string) {
-    const existReaction = this.reactionModel.findById(id).exec();
+  async findAll(): Promise<Reaction[]> {
+    return await this.reactionModel.find().exec();
+  }
+
+  async findById(id: string): Promise<Reaction> {
+    const existReaction = await this.reactionModel.findById(id).exec();
     if (!existReaction) {
-      throw new NotFoundException(`Reaction #${id} not found`);
+      throw new SchemaNotFoundException(Reaction.name, id);
     }
     return existReaction;
   }
 
-  update(id: string, dto: UpdateReactionDto) {
-    const existReaction = this.reactionModel.findByIdAndUpdate(id, dto, {
-      new: true,
-    });
+  async delete(id: string): Promise<boolean> {
+    const existReaction = await this.reactionModel.findByIdAndDelete(id).exec();
     if (!existReaction) {
-      throw new NotFoundException(`Reaction #${id} not found`);
+      throw new SchemaNotFoundException(Reaction.name, id);
     }
-    return existReaction;
-  }
-
-  remove(id: string) {
-    const existReaction = this.reactionModel.findByIdAndDelete(id);
-    if (!existReaction) {
-      throw new NotFoundException(`Reaction #${id} not found`);
-    }
-    return existReaction;
+    return true;
   }
 }

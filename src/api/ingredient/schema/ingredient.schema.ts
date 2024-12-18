@@ -14,7 +14,7 @@ export class Ingredient {
   calo: string;
 
   @Prop({ required: true })
-  unit: string;
+  unit: string; // TODO: Change to Enum with predefined values: 'g', 'ml', 'piece'
 
   @Prop({ required: true })
   description: string;

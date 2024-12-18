@@ -6,11 +6,7 @@ import { RecipePostController } from './recipe_post.controller';
 import { RecipePostService } from './recipe_post.service';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      { name: RecipePost.name, schema: RecipePostSchema },
-    ]),
-  ],
+  imports: [MongooseModule.forFeature([{ name: RecipePost.name, schema: RecipePostSchema }])],
   controllers: [RecipePostController],
   providers: [RecipePostService],
 })

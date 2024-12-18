@@ -38,9 +38,9 @@ import { UserModule } from './api/user/user.module';
     IngredientModule,
     StepModule,
     // RecipePostModule,
-    // ReactionModule,
+    ReactionModule,
     RecipeModule,
-    // CommentModule,
+    CommentModule,
     // TODO: UNCOMMENT MODULES
   ],
 })

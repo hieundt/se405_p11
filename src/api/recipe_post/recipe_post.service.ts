@@ -6,9 +6,7 @@ import { RecipePost } from './schema/recipe_post.schema';
 
 @Injectable()
 export class RecipePostService {
-  constructor(
-    @InjectModel(RecipePost.name) private recipePostModel: Model<RecipePost>,
-  ) {}
+  constructor(@InjectModel(RecipePost.name) private recipePostModel: Model<RecipePost>) {}
 
   create(dto: RecipePost) {
     const post = new this.recipePostModel(dto);
@@ -37,7 +35,7 @@ export class RecipePostService {
     return existPost;
   }
 
-  remove(id: string) {
+  delete(id: string) {
     const existPost = this.recipePostModel.findByIdAndDelete(id);
     if (!existPost) {
       throw new NotFoundException(`Post #${id} not found`);
