@@ -35,15 +35,25 @@ export class CommentService {
   }
 
   async update(id: string, dto: CommentDto): Promise<Comment> {
-    const existComment = await this.commentModel
-      .findByIdAndUpdate(id, dto, {
-        new: true,
-      })
-      .exec();
+    const existComment = await this.commentModel.findById(id).exec();
+
     if (!existComment) {
       throw new SchemaNotFoundException(Comment.name, id);
     }
-    return existComment;
+
+    const updateComment: CommentDto = {
+      userId: dto.userId ?? existComment.userId,
+      recipePostId: dto.recipePostId ?? existComment.recipePostId,
+      isParent: dto.isParent ?? existComment.isParent,
+      parentId: dto.parentId ?? existComment.parentId,
+      content: dto.content ?? existComment.content,
+    };
+
+    return await this.commentModel
+      .findByIdAndUpdate(id, updateComment, {
+        new: true,
+      })
+      .exec();
   }
 
   async delete(id: string): Promise<boolean> {

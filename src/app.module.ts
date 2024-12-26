@@ -37,7 +37,7 @@ import { UserModule } from './api/user/user.module';
     RatingModule,
     IngredientModule,
     StepModule,
-    // RecipePostModule,
+    RecipePostModule,
     ReactionModule,
     RecipeModule,
     CommentModule,

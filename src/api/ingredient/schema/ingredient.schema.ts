@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { UnitEnum } from 'src/enum';
 
 export type IngredientDocument = Ingredient & Document;
 
@@ -14,9 +15,9 @@ export class Ingredient {
   calo: string;
 
   @Prop({ required: true })
-  unit: string; // TODO: Change to Enum with predefined values: 'g', 'ml', 'piece'
+  unit: UnitEnum;
 
-  @Prop({ required: true })
+  @Prop()
   description: string;
 }
 

@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, InternalServerErrorException } from '@nestjs/common';
 import { RecipePost } from './schema/recipe_post.schema';
-import { UpdateRecipePostDto } from './dto/update_recipe_post.dto';
+import { RecipePostDto } from './dto/recipe_post.dto';
 import { RecipePostService } from './recipe_post.service';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -10,27 +10,47 @@ export class RecipePostController {
   constructor(private readonly postService: RecipePostService) {}
 
   @Post()
-  create(@Body() dto: RecipePost) {
-    return this.postService.create(dto);
+  async create(@Body() dto: RecipePost) {
+    try {
+      return await this.postService.create(dto);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   @Get()
-  findAll() {
-    return this.postService.findAll();
+  async findAll() {
+    try {
+      return await this.postService.findAll();
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   @Get(':id')
   async findById(@Param('id') id: string) {
-    return await this.postService.findById(id);
+    try {
+      return await this.postService.findById(id);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateRecipePostDto) {
-    return this.postService.update(id, dto);
+  async update(@Param('id') id: string, @Body() dto: RecipePostDto) {
+    try {
+      return await this.postService.update(id, dto);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string) {
-    return this.postService.delete(id);
+  async delete(@Param('id') id: string) {
+    try {
+      return await this.postService.delete(id);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 }

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsMongoId, IsNotEmpty } from 'class-validator';
-import { RATING } from 'src/interfaces';
+import { RatingEnum } from 'src/enum';
 
 export class RatingDto {
   @ApiProperty()
@@ -13,8 +13,11 @@ export class RatingDto {
   @IsNotEmpty()
   recipeId: string;
 
-  @ApiProperty({ enum: [1, 2, 3, 4, 5] })
-  @IsEnum([1, 2, 3, 4, 5])
+  @ApiProperty({
+    example: '2',
+    enum: RatingEnum,
+  })
+  @IsEnum(RatingEnum)
   @IsNotEmpty()
-  rating: RATING;
+  rating: RatingEnum;
 }

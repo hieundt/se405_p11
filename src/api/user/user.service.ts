@@ -43,6 +43,9 @@ export class UserService {
     return newUser.save();
   }
 
+  //TODO: Read me
+  // Method nay tim user theo email, neu tim thay thi update password moi
+  // Han che su dung method nay
   async forgotPassword(dto: ForgotPasswordDto): Promise<boolean> {
     const existUser = await this.userModel.findOne({ email: dto.email }).exec();
     if (existUser) {

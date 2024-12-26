@@ -7,39 +7,47 @@ import { SchemaNotFoundException } from 'src/common/error';
 
 @Injectable()
 export class StepService {
-  constructor(@InjectModel(Step.name) private ingredientModel: Model<Step>) {}
+  constructor(@InjectModel(Step.name) private stepModel: Model<Step>) {}
 
   async create(dto: StepDto) {
-    const ingredient = new this.ingredientModel(dto);
+    const ingredient = new this.stepModel(dto);
     return await ingredient.save();
   }
 
   async findAll() {
-    return await this.ingredientModel.find().exec();
+    return await this.stepModel.find().exec();
   }
 
   async findById(id: string) {
-    const existStep = await this.ingredientModel.findById(id).exec();
+    const existStep = await this.stepModel.findById(id).exec();
     if (!existStep) {
       throw new SchemaNotFoundException(Step.name, id);
     }
     return existStep;
   }
 
-  async update(id: string, dto: StepDto) {
-    const existStep = await this.ingredientModel
-      .findByIdAndUpdate(id, dto, {
+  async update(id: string, dto: StepDto): Promise<Step> {
+    const existStep = await this.stepModel.findById(id).exec();
+
+    if (!existStep) {
+      throw new SchemaNotFoundException(Step.name, id);
+    }
+
+    const updateStep: StepDto = {
+      source: dto.source ?? existStep.source,
+      stepNumber: dto.stepNumber ?? existStep.stepNumber,
+      instruction: dto.instruction ?? existStep.instruction,
+    };
+
+    return await this.stepModel
+      .findByIdAndUpdate(id, updateStep, {
         new: true,
       })
       .exec();
-    if (!existStep) {
-      throw new SchemaNotFoundException(Step.name, id);
-    }
-    return existStep;
   }
 
   async delete(id: string) {
-    const existStep = await this.ingredientModel.findByIdAndDelete(id).exec();
+    const existStep = await this.stepModel.findByIdAndDelete(id).exec();
     if (!existStep) {
       throw new SchemaNotFoundException(Step.name, id);
     }

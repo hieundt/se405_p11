@@ -10,7 +10,7 @@ export class Rating {
   @Prop({ required: true })
   recipeId: string;
 
-  @Prop({ required: true, enum: [1, 2, 3, 4, 5] })
+  @Prop({ required: true })
   rating: number;
 }
 

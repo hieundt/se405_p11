@@ -26,16 +26,26 @@ export class IngredientService {
     return existIngredient;
   }
 
-  async update(id: string, dto: IngredientDto) {
-    const existIngredient = await this.ingredientModel
-      .findByIdAndUpdate(id, dto, {
-        new: true,
-      })
-      .exec();
+  async update(id: string, dto: IngredientDto): Promise<Ingredient> {
+    const existIngredient = await this.ingredientModel.findById(id).exec();
+
     if (!existIngredient) {
       throw new SchemaNotFoundException(Ingredient.name, id);
     }
-    return existIngredient;
+
+    const updateIngredient: IngredientDto = {
+      img: dto.img ?? existIngredient.img,
+      name: dto.name ?? existIngredient.name,
+      calo: dto.calo ?? existIngredient.calo,
+      unit: dto.unit ?? existIngredient.unit,
+      description: dto.description ?? existIngredient.description,
+    };
+
+    return await this.ingredientModel
+      .findByIdAndUpdate(id, updateIngredient, {
+        new: true,
+      })
+      .exec();
   }
 
   async delete(id: string) {

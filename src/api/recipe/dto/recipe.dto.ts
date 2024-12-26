@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ArrayNotEmpty, IsArray, IsEnum, IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { DifficultEnum } from 'src/enum';
 
 export class RecipeDto {
   @ApiProperty({ example: '60d8b9e6f1a7f231d8e5b123', description: 'User ID of the recipe creator' })
@@ -27,10 +28,14 @@ export class RecipeDto {
   @IsNotEmpty()
   timeCook: number;
 
-  @ApiProperty({ example: 3, description: 'Difficulty level of the recipe (1-5)' })
-  @IsEnum([1, 2, 3, 4, 5])
+  @ApiProperty({
+    example: '2',
+    description: 'Difficulty level of the recipe (1-5)',
+    enum: DifficultEnum,
+  })
+  @IsEnum(DifficultEnum)
   @IsNotEmpty()
-  difficult: number;
+  difficult: DifficultEnum;
 
   @ApiProperty({ example: 500, description: 'Total calories for the recipe' })
   @IsNumber()

@@ -28,15 +28,23 @@ export class RatingService {
   }
 
   async update(id: string, dto: RatingDto): Promise<Rating> {
-    const existRating = await this.ratingModel
-      .findByIdAndUpdate(id, dto, {
-        new: true,
-      })
-      .exec();
+    const existRating = await this.ratingModel.findById(id).exec();
+
     if (!existRating) {
       throw new SchemaNotFoundException(Rating.name, id);
     }
-    return existRating;
+
+    const updateRating: RatingDto = {
+      userId: dto.userId ?? existRating.userId,
+      recipeId: dto.recipeId ?? existRating.recipeId,
+      rating: dto.rating ?? existRating.rating,
+    };
+
+    return await this.ratingModel
+      .findByIdAndUpdate(id, updateRating, {
+        new: true,
+      })
+      .exec();
   }
 
   async delete(id: string): Promise<boolean> {

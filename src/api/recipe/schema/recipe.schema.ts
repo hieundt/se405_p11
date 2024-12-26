@@ -1,8 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
-import { Ingredient } from 'src/api/ingredient/schema/ingredient.schema';
-import { Step } from 'src/api/step/schema/step.schema';
-import { DIFFICULT } from 'src/interfaces';
+import { DifficultEnum } from 'src/enum';
 
 export type RecipeDocument = Recipe & Document;
 
@@ -23,17 +21,17 @@ export class Recipe {
   @Prop({ required: true })
   timeCook: number;
 
-  @Prop({ required: true, enum: [1, 2, 3, 4, 5] })
-  difficult: DIFFICULT;
+  @Prop({ required: true })
+  difficult: DifficultEnum;
 
   @Prop({ required: true })
   caloTotal: number;
 
   @Prop({ required: true, type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Ingredient' }] })
-  ingredientList: Ingredient[];
+  ingredientList: string[];
 
   @Prop({ required: true, type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Step' }] })
-  stepList: Step[];
+  stepList: string[];
 }
 
 export const RecipeSchema = SchemaFactory.createForClass(Recipe);
