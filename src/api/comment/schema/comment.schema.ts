@@ -13,7 +13,7 @@ export class Comment {
   @Prop({ required: true })
   isParent: boolean;
 
-  @Prop({ required: true })
+  @Prop()
   parentId: string;
 
   @Prop({ equired: true })
