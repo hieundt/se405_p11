@@ -9,7 +9,7 @@ import { SchemaNotFoundException } from 'src/common/error';
 export class RecipePostService {
   constructor(@InjectModel(RecipePost.name) private recipePostModel: Model<RecipePost>) {}
 
-  async create(dto: RecipePost) {
+  async create(dto: RecipePostDto) {
     const post = new this.recipePostModel(dto);
     return await post.save();
   }

@@ -14,6 +14,7 @@ import {
 import { User } from './schema/user.schema';
 import { EmailVerification } from './schema/emailVerification.schema';
 import { ConfigService } from '@nestjs/config';
+import createVerifyHtml from './html/verifyHtml';
 
 @Injectable()
 export class UserService {
@@ -33,7 +34,9 @@ export class UserService {
     if (!isMatch) {
       throw new PasswordDoesNotMatchException();
     }
-    return existUser;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...userData } = existUser.toJSON();
+    return userData;
   }
 
   async signUp(dto: CreateUserDto): Promise<User> {
@@ -126,7 +129,7 @@ export class UserService {
       if (existUser) {
         existUser.isVerify = true;
         const savedUser = await existUser.save();
-        await emailVerif.deleteOne();
+        await this.emailVerificationModel.findByIdAndDelete(emailVerif._id).exec();
         return !!savedUser;
       }
     } else {
@@ -154,19 +157,11 @@ export class UserService {
       });
 
       const mailOptions = {
-        from: '"Food Share" <' + this.email_user + '>',
-        to: email, // list of receivers (separated by ,)
+        from: `"Food Share" <${this.email_user}>`,
+        to: email, // List of receivers
         subject: 'Verify Email',
-        text: 'Verify Email',
-        html:
-          'Hi! <br><br> Thanks for your registration<br><br>' +
-          '<a href=' +
-          'config.host.url' +
-          ':' +
-          this.email_port +
-          '/auth/email/verify/' +
-          emailVerif.emailToken +
-          '>Click here to activate your account</a>',
+        text: 'Verify Email', // Plain text version (fallback for non-HTML email clients)
+        html: createVerifyHtml(emailVerif.emailToken),
       };
 
       const sent = await new Promise<boolean>(async function (resolve, reject) {

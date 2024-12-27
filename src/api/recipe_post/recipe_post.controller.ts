@@ -1,5 +1,4 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, InternalServerErrorException } from '@nestjs/common';
-import { RecipePost } from './schema/recipe_post.schema';
 import { RecipePostDto } from './dto/recipe_post.dto';
 import { RecipePostService } from './recipe_post.service';
 import { ApiTags } from '@nestjs/swagger';
@@ -10,7 +9,7 @@ export class RecipePostController {
   constructor(private readonly postService: RecipePostService) {}
 
   @Post()
-  async create(@Body() dto: RecipePost) {
+  async create(@Body() dto: RecipePostDto) {
     try {
       return await this.postService.create(dto);
     } catch (error) {
