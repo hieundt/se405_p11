@@ -12,9 +12,12 @@ export class RecipePost {
   title: string;
 
   @Prop()
+  source: string; // Binary
+
+  @Prop()
   description: string;
 
-  @Prop({ required: true, type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Recipe' }] })
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Recipe' }] })
   recipeList: string[];
 }
 

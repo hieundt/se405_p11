@@ -19,6 +19,14 @@ export class RecipePostDto {
   title: string;
 
   @ApiProperty({
+    example: 'https://example.com/video.mp4',
+    description: 'Optional source URL for media (e.g., image, video)',
+  })
+  @IsString()
+  @IsOptional()
+  source?: string;
+
+  @ApiProperty({
     example: 'A collection of my favorite recipes.',
     description: 'Optional description for the recipe post',
   })

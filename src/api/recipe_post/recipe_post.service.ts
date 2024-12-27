@@ -36,6 +36,7 @@ export class RecipePostService {
     const updateRecipePost: RecipePostDto = {
       userId: dto.userId ?? existRecipePost.userId,
       title: dto.title ?? existRecipePost.title,
+      source: dto.source ?? existRecipePost.source,
       description: dto.description ?? existRecipePost.description,
       recipeList: dto.recipeList ?? existRecipePost.recipeList,
     };
