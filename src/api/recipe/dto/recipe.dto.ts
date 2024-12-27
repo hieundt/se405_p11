@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ArrayNotEmpty, IsArray, IsEnum, IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Ingredient } from 'src/api/ingredient/schema/ingredient.schema';
+import { Step } from 'src/api/step/schema/step.schema';
 import { DifficultEnum } from 'src/enum';
 
 export class RecipeDto {
@@ -42,21 +44,15 @@ export class RecipeDto {
   @IsNotEmpty()
   caloTotal: number;
 
-  @ApiProperty({
-    example: ['60d8b9e6f1a7f231d8e5b111', '60d8b9e6f1a7f231d8e5b112'],
-    description: 'List of ingredient IDs',
-  })
   @IsArray()
   @ArrayNotEmpty()
-  @IsMongoId({ each: true })
-  ingredientList: string[];
+  @ApiProperty()
+  // @IsMongoId({ each: true })
+  ingredientList: Ingredient[];
 
-  @ApiProperty({
-    example: ['60d8b9e6f1a7f231d8e5c123', '60d8b9e6f1a7f231d8e5c124'],
-    description: 'List of step IDs',
-  })
+  @ApiProperty()
   @IsArray()
   @ArrayNotEmpty()
-  @IsMongoId({ each: true })
-  stepList: string[];
+  // @IsMongoId({ each: true })
+  stepList: Step[];
 }

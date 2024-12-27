@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import * as nodemailer from 'nodemailer';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as argon2 from 'argon2';
@@ -11,12 +12,15 @@ import {
   SchemaNotFoundException,
 } from 'src/common/error';
 import { User } from './schema/user.schema';
+import { EmailVerification } from './schema/emailVerification.schema';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectModel(User.name)
-    private readonly userModel: Model<User>,
+    @InjectModel(User.name) private readonly userModel: Model<User>,
+    @InjectModel(EmailVerification.name) private readonly emailVerificationModel: Model<EmailVerification>,
+    private configService: ConfigService,
   ) {}
 
   async signIn(dto: SignInDto): Promise<any> {
@@ -94,5 +98,91 @@ export class UserService {
       throw new SchemaNotFoundException(User.name, id);
     }
     return true;
+  }
+
+  //VERIFY EMAIL
+  async createEmailToken(email: string): Promise<boolean> {
+    const emailVerification = await this.emailVerificationModel.findOne({ email: email });
+    if (emailVerification && (new Date().getTime() - emailVerification.createdAt.getTime()) / 60000 < 15) {
+      throw new HttpException('LOGIN.EMAIL_SENT_RECENTLY', HttpStatus.INTERNAL_SERVER_ERROR);
+    } else {
+      await this.emailVerificationModel.findOneAndUpdate(
+        { email: email },
+        {
+          email: email,
+          emailToken: (Math.floor(Math.random() * 9000000) + 1000000).toString(), //Generate 7 digits number
+          timestamp: new Date(),
+        },
+        { upsert: true },
+      );
+      return true;
+    }
+  }
+
+  async verifyEmail(token: string): Promise<boolean> {
+    const emailVerif = await this.emailVerificationModel.findOne({ emailToken: token });
+    if (emailVerif && emailVerif.email) {
+      const existUser = await this.userModel.findOne({ email: emailVerif.email }).exec();
+      if (existUser) {
+        existUser.isVerify = true;
+        const savedUser = await existUser.save();
+        await emailVerif.deleteOne();
+        return !!savedUser;
+      }
+    } else {
+      throw new HttpException('LOGIN.EMAIL_CODE_NOT_VALID', HttpStatus.FORBIDDEN);
+    }
+  }
+
+  private email_host = this.configService.get('email.email_host');
+  private email_port = this.configService.get('email.email_port');
+  private email_user = this.configService.get('email.email_user');
+  private email_pass = this.configService.get('email.email_pass');
+
+  async sendEmailVerification(email: string): Promise<boolean> {
+    const emailVerif = await this.emailVerificationModel.findOne({ email: email });
+
+    if (emailVerif && emailVerif.emailToken) {
+      const transporter = nodemailer.createTransport({
+        host: this.email_host,
+        port: this.email_port,
+        secure: this.email_port === 465, // true for 465, false for other ports
+        auth: {
+          user: this.email_user,
+          pass: this.email_pass,
+        },
+      });
+
+      const mailOptions = {
+        from: '"Food Share" <' + this.email_user + '>',
+        to: email, // list of receivers (separated by ,)
+        subject: 'Verify Email',
+        text: 'Verify Email',
+        html:
+          'Hi! <br><br> Thanks for your registration<br><br>' +
+          '<a href=' +
+          'config.host.url' +
+          ':' +
+          this.email_port +
+          '/auth/email/verify/' +
+          emailVerif.emailToken +
+          '>Click here to activate your account</a>',
+      };
+
+      const sent = await new Promise<boolean>(async function (resolve, reject) {
+        return await transporter.sendMail(mailOptions, async (error, info) => {
+          if (error) {
+            console.log('Message sent: %s', error);
+            return reject(false);
+          }
+          console.log('Message sent: %s', info.messageId);
+          resolve(true);
+        });
+      });
+
+      return sent;
+    } else {
+      throw new HttpException('REGISTER.USER_NOT_REGISTERED', HttpStatus.FORBIDDEN);
+    }
   }
 }

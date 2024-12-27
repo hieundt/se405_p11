@@ -71,3 +71,15 @@ export class ForgotPasswordDto {
   @IsNotEmpty()
   confirmNewPassword: string;
 }
+
+export class VerifyTokenDto {
+  @IsNotEmpty()
+  @IsString()
+  token: string;
+}
+
+export class SendEmailVerificationDto {
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+}

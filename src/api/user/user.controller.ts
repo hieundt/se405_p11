@@ -1,7 +1,8 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, InternalServerErrorException } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
-import { CreateUserDto, ForgotPasswordDto, SignInDto, UpdateUserDto } from './dto/user.dto';
+import { CreateUserDto, ForgotPasswordDto, SignInDto, UpdateUserDto, VerifyTokenDto } from './dto/user.dto';
+import { EmailVerification } from './schema/emailVerification.schema';
 
 @ApiTags('User')
 @Controller('user')
@@ -57,6 +58,33 @@ export class UserController {
   delete(@Param('id') id: string) {
     try {
       return this.userService.deleteUser(id);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  //VERIFI EMAIL
+  @Get('email/verify/:token')
+  public async verifyEmail(@Param() params: VerifyTokenDto) {
+    try {
+      const isEmailVerified = await this.userService.verifyEmail(params.token);
+      return { message: 'LOGIN.EMAIL_VERIFIED', data: isEmailVerified };
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  @Get('email/resend-verification/:email')
+  public async sendEmailVerification(@Param() params: EmailVerification) {
+    try {
+      await this.userService.createEmailToken(params.email);
+      const isEmailSent = await this.userService.sendEmailVerification(params.email);
+      if (isEmailSent) {
+        return { message: 'LOGIN.EMAIL_RESENT', data: null };
+        // return null;
+      } else {
+        return { message: 'REGISTRATION.ERROR.MAIL_NOT_SENT.EMAIL_RESENT' };
+      }
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }

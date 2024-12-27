@@ -2,7 +2,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { appConfig, jwtConfig, mongoConfig, swaggerConfig } from './config';
+import { appConfig, jwtConfig, mongoConfig, swaggerConfig, emailConfig } from './config';
 import { RecipeModule } from './api/recipe/recipe.module';
 import { IngredientModule } from './api/ingredient/ingredient.module';
 import { StepModule } from './api/step/step.module';
@@ -16,7 +16,7 @@ import { UserModule } from './api/user/user.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig, jwtConfig, swaggerConfig, mongoConfig],
+      load: [appConfig, jwtConfig, swaggerConfig, mongoConfig, emailConfig],
       envFilePath: ['.env'],
     }),
     MongooseModule.forRootAsync({
